@@ -44,15 +44,15 @@ public class Controller {
     }
     
     public String addStudentLaser(String sPnr, String kurskod, String temrin) throws SQLException {
-        return dal.addStudentStudying(sPnr, kurskod, temrin);
+        return dal.addStudentLaser(sPnr, kurskod, temrin);
     }
     
     public void addStudentLast(String sPnr, String kurskod, String termin, String betyg) throws SQLException {
-        dal.addStudentStudied(sPnr, kurskod, termin, betyg);
+        dal.addStudentLast(sPnr, kurskod, termin, betyg);
     }
     
-    public ArrayList<Student> getAllStudentReadingCourse(String kurskod, String termin) throws SQLException {
-        return dal.getAllStudentReadingCourse(kurskod, termin);
+    public ArrayList<Student> getAllStudentReadingKurs(String kurskod, String termin) throws SQLException {
+        return dal.getAllStudentReadingKurs(kurskod, termin);
     }
     
     public ArrayList<Kurs> getAllKurs() throws SQLException {
@@ -68,5 +68,5 @@ public class Controller {
     }
     
       public void removeStudentFromLaser(String sPnr, String kurskod) throws SQLException {
-        dal.removeStudentFromStudying(sPnr, kurskod);
+        dal.removeStudentFromLaser(sPnr, kurskod);
     }
