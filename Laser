@@ -1,0 +1,36 @@
+
+package uppgift1;
+
+
+public class Laser {
+    private String sPnr;
+    private String kurskod;
+    private String termin;
+    
+    public Laser(String sPnr, String kurskod, String termin) {
+        setSPnr(sPnr);
+        setKurskod(kurskod);
+        setTermin(termin);
+    }
+    
+    public void setSPnr(String sPnr){
+        this.sPnr = sPnr;
+    }
+    
+    public String getSPnr(){
+        return sPnr;
+    }
+    
+    public void setKurskod(String kurskod){
+        this.kurskod = kurskod;
+    }
+    
+    public void setTermin(String termin) {
+        this.termin = termin;
+    }
+    
+    public String getTermin() {
+        return termin;
+    }
+    
+}
