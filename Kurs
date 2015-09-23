@@ -1,0 +1,40 @@
+
+package uppgift1;
+
+
+public class Kurs {
+    private String kurskod;
+    private String kursnamn;
+    private int poang;
+    
+    public Kurs(String kurskod, String kursnamn, int poang) {
+        setKurskod(kurskod);
+        setKursnamn(kursnamn);
+        setPoang(poang);
+    }
+    
+    public void setKurskod(String kurskod){
+        this.kurskod = kurskod;
+    }
+    
+    public String getKurskod() {
+        return kurskod;
+    }
+    
+    public void setPoang(int poang){
+        this.poang = poang;
+    }
+    
+    public int getPoang() {
+        return poang;
+    }
+    
+    public void setKursnamn(String kursnamn){
+        this.kursnamn = kursnamn;
+    }
+    
+    public String getKursnamn() {
+        return this.kursnamn;
+    }
+    
+}
