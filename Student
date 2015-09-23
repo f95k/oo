@@ -1,0 +1,41 @@
+
+package uppgift1;
+
+
+public class Student {
+    private String sPnr;
+    private String sNamn;
+    private String sAdress;
+    
+    public Student(String sPnr, String sNamn, String sAdress){
+        setSPnr(sPnr);
+        setSNamn(sNamn);
+        setSAdress(sAdress);
+    }
+    
+    public void setSPnr(String sPnr) {
+        this.sPnr = sPnr;
+    }
+    
+    public String getSPnr() {
+        return sPnr;
+        
+    }
+    
+    public void setSNamn(String sNamn){
+        this.sNamn = sNamn;
+    } 
+    
+    public String getSNamn() {
+        return sNamn;
+    }
+    
+    public void setSAdress(String sAdress) {
+        this.sAdress = sAdress;
+    }
+    
+    public String getSAdress() {
+        return sAdress;
+    }
+    
+}
