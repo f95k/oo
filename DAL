@@ -1,0 +1,181 @@
+
+package uppgift1;
+import java.sql.*;
+import java.util.*;
+
+public class DAL {
+    private Kurs kurs;
+    private String kursnamn;
+    private int poang;
+    private int poang1;
+    private int poang2;
+    private Laser laser;
+    private Last last;
+    private String sNamn;
+    private String sAdress;
+    private String sqlString;
+    private String sqlString1;
+    
+    
+    public void addKurs(String kurskod, String kursnamn, int poang) throws SQLException {
+		
+		Connection conn = Connector.startConnection();
+
+		Statement stmt = conn.createStatement();
+		String sqlString = "INSERT INTO Kurs VALUES ('" + kurskod + "', '"
+				+ kursnamn + "', '" + poang + "')";
+		stmt.executeUpdate(sqlString);
+		stmt.close();
+
+	}
+	
+	
+	
+    public void addStudent(String sPnr, String sNamn, String sAddress) throws SQLException {
+
+		Connection conn = Connector.startConnection();
+
+		Statement stmt = conn.createStatement();
+		
+		String sqlString = "INSERT INTO Student VALUES ('" + sPnr + "', '"
+				+ sNamn + "', '" + sAddress + "');";
+		
+		stmt.executeUpdate(sqlString);
+		stmt.close();
+
+	}
+	
+	
+	
+    
+    public Student getStudent(String sPnr) throws SQLException {
+        Connection conn = Connector.startConnection();
+        sqlString = "SELECT * FROM Student WHERE pnr = '" + sPnr + "'";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sqlString);
+        rs.next();
+        sPnr = rs.getString(1);
+        sNamn = rs.getString(2);
+        sAdress = rs.getString(3);
+        
+        Student student = new Student(sPnr, sNamn, sAdress);
+        return student;
+        
+    }
+    
+      public Kurs getKurs(String kurskod) throws SQLException{
+        Connection conn = Connector.startConnection();
+        sqlString = "SELECT * FROM Kurs WHERE kurskod = '" + kurskod + "'";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sqlString); 
+        rs.next(); 
+        kurskod = rs.getString(1); 
+        kursnamn = rs.getString(2); 
+        poang = rs.getInt(3); 
+        kurs = new Kurs(kurskod, kursnamn, poang); 
+        return kurs;
+        
+    }
+    
+    
+    public ArrayList<Student> getGradeList(String kurskod, String termin) throws SQLException {
+
+		ArrayList<Student> studentList = new ArrayList<Student>();
+
+		Connection conn = Connector.startConnection();
+
+		sqlString = "SELECT h.ssid, s.sname, h.grade FROM Studied h JOIN Student s "
+				+ "ON h.ssid = s.ssid WHERE h.ccode = '"
+				+ kurskod+ "'";
+
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sqlString);
+
+		while (rs.next()) {
+                    Student student = new Student(rs.getString(1), rs.getString(2),
+                            rs.getString(3));
+			studentList.add(student);
+		}
+
+		return studentList;
+	}
+    
+    
+		public void addStudentStudied(String sPnr, String kurskod, String termin, String betyg) throws SQLException {
+
+		Connection conn = Connector.startConnection();
+
+		Statement stmt = conn.createStatement();
+		String sqlQuery = "INSERT INTO Last VALUES ('" + sPnr + "', '"
+				+ kurskod + "', '" + betyg + "')";
+		stmt.executeUpdate(sqlQuery);
+		stmt.close();
+
+		//Tar bort studenten från studying i databasen
+		removeStudentFromStudying(sPnr, kurskod);
+
+	}
+    
+    
+    
+    
+    	public ArrayList<Last> getGradeForCourse(String sPnr, String kurskod) throws SQLException {
+		ArrayList<Last> lastList = new ArrayList<Last>();
+
+		Connection conn = Connector.startConnection();
+
+		sqlString = "SELECT sPnr, kurskod, betyg FROM Last WHERE sPnr = '" + sPnr + "' and kurskod = '" + kurskod + "'";
+
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sqlString);
+		while (rs.next()) {
+                     Last l1 = new Last(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
+		     lastList.add(last);
+		}
+
+		return lastList;
+	}
+	
+	
+		public ArrayList<Laser> getStudentsCourse(String sPnr) throws SQLException {
+		
+		ArrayList<Laser> kursList = new ArrayList<Laser>();
+
+		Connection con = Connector.startConnection();
+		sqlString = "SELECT c.ccode, c.cname, r.semester FROM Studying r "
+				+ "INNER JOIN Course c " + "ON r.ccode = c.ccode  "
+				+ "WHERE ssid = '" + sPnr + "'";
+		
+		Statement stmt = con.createStatement();
+		ResultSet rs = stmt.executeQuery(sqlString);
+
+		while (rs.next()) {
+			laser = new Laser(rs.getString(1), rs.getString(2),
+					rs.getString(3));
+			kursList.add(laser);
+
+		}
+		
+		return kursList;
+	}
+
+
+
+	public ArrayList<Kurs> getAllCourse() throws SQLException {
+		ArrayList<Kurs> kursList = new ArrayList<Kurs>();
+
+		Connection conn = Connector.startConnection();
+
+		sqlString = "SELECT * FROM Kurs";
+
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sqlString);
+
+		while (rs.next()) {
+			kurs= new Kurs(rs.getString(1), rs.getString(2), rs.getInt(3));
+			kursList.add(kurs);
+		}
+
+		return kursList;
+	}
+    
