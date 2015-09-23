@@ -1,0 +1,33 @@
+
+package uppgift1;
+
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class Test {
+    Controller controller;
+    Connector connector;
+        public static void main(String args[]) {
+        Controller controller = new Controller();
+        
+        
+        
+         try {
+             controller.addStudent("hej45", "då", "yo");
+        } catch (SQLException ex) {
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+        
+        try {
+            
+            controller.addKurs("testar45", "detta", 25);
+        } catch(SQLException e) {
+            System.out.print(e);
+        }
+            
+
+        }    
+}
