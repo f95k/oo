@@ -48,25 +48,35 @@ public class Controller {
     }
     
     public void addStudentLast(String sPnr, String kurskod, String termin, String betyg) throws SQLException {
-        dal.addStudentLast(sPnr, kurskod, termin, betyg);
+        dal.addStudentStudied(sPnr, kurskod, termin, betyg);
     }
     
-    public ArrayList<Student> getAllStudentReadingKurs(String kurskod, String termin) throws SQLException {
-        return dal.getAllStudentReadingKurs(kurskod, termin);
+    public ArrayList<Student> getAllStudentReadingCourse(String kurskod, String termin) throws SQLException {
+        return dal.getAllStudentReadingCourse(kurskod, termin);
     }
     
     public ArrayList<Kurs> getAllKurs() throws SQLException {
         return dal.getAllCourse();
     }
     
-     public void removeStudent(String sPnr) throws SQLException {
+    public String getPercentageGradeA(String kurskod, String termin) throws SQLException {
+        percentage = dal.getPercentageGradeA(kurskod, termin);
+        return percentage;
+    }
+    
+    public void removeStudent(String sPnr) throws SQLException {
         dal.deleteStudent(sPnr);
     }
     
-      public void removeKurs(String kurskod) throws SQLException {
+    public void removeKurs(String kurskod) throws SQLException {
         dal.deleteCourse(kurskod);
     }
     
-      public void removeStudentFromLaser(String sPnr, String kurskod) throws SQLException {
-        dal.removeStudentFromLaser(sPnr, kurskod);
+    public void removeStudentFromLaser(String sPnr, String kurskod) throws SQLException {
+        dal.removeStudentFromStudying(sPnr, kurskod);
     }
+    
+    public String getStudentFlow() throws SQLException {
+        return dal.getStudentFlow();
+    }
+}
