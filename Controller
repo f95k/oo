@@ -16,6 +16,43 @@ public class Controller {
         dal = new DAL();
     }
     
+    public void getStudentTable(String sPnr) throws SQLException{
+        dal.getStudentTable(sPnr);
+    }
+    
+    public void getHighestFlow() throws SQLException{
+        dal.highestFlow();
+    }
+    
+     public void getKursTable(String kurskod) throws SQLException{
+        dal.getKursTable(kurskod);
+    }
+     
+    public void getLastTable(String sPnr, String kurskod) throws SQLException{
+        dal.getLastTable(sPnr, kurskod);
+    } 
+    
+    public void getKursBetygTable(String kurskod, String termin) throws SQLException{
+        dal.getKursBetygTable(kurskod, termin);
+    } 
+    
+    public void getLaserTable(String kurskod, String termin) throws SQLException{
+        dal.getLaserTable(kurskod, termin);
+    } 
+    
+    public void getStudentLaserTable(String sPnr) throws SQLException{
+        dal.getStudentLaserTable(sPnr);
+    } 
+    
+     public void getStudentLastTable(String sPnr) throws SQLException{
+        dal.getStudentLastTable(sPnr);
+    } 
+     
+     public void getTotalPoang(String sPnr, String termin) throws SQLException{
+        dal.getTotalPoang(sPnr, sPnr);
+    } 
+    
+    
     public Student findStudent(String sPnr) throws SQLException{
         student = dal.getStudent(sPnr);
         return student;
@@ -27,11 +64,11 @@ public class Controller {
     }
     
     public ArrayList<Last> findBetyg(String sPnr, String kurskod) throws SQLException {
-        return dal.getGradeForCourse(sPnr, kurskod);
+        return dal.getKursBetyg(sPnr, kurskod);
     }
     
     public ArrayList<Student> getBetygList(String kurskod, String termin) throws SQLException {
-        return dal.getAllStudentReadingCourse(kurskod, termin);
+        return dal.getAllStudentReadingKurs(kurskod, termin);
     }
     
     public void addStudent(String sPnr, String sNamn, String sAdress) throws SQLException {
@@ -43,20 +80,21 @@ public class Controller {
         
     }
     
-    public String addStudentLaser(String sPnr, String kurskod, String temrin) throws SQLException {
-        return dal.addStudentLaser(sPnr, kurskod, temrin);
+    
+    public void addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
+        dal.addStudentLaser(sPnr, kurskod, termin);
     }
     
     public void addStudentLast(String sPnr, String kurskod, String termin, String betyg) throws SQLException {
-        dal.addStudentStudied(sPnr, kurskod, termin, betyg);
+        dal.addStudentLast(sPnr, kurskod, termin, betyg);
     }
     
     public ArrayList<Student> getAllStudentReadingCourse(String kurskod, String termin) throws SQLException {
-        return dal.getAllStudentReadingCourse(kurskod, termin);
+        return dal.getAllStudentReadingKurs(kurskod, termin);
     }
     
     public ArrayList<Kurs> getAllKurs() throws SQLException {
-        return dal.getAllCourse();
+        return dal.getAllKurser();
     }
     
     public String getPercentageGradeA(String kurskod, String termin) throws SQLException {
@@ -73,10 +111,10 @@ public class Controller {
     }
     
     public void removeStudentFromLaser(String sPnr, String kurskod) throws SQLException {
-        dal.removeStudentFromStudying(sPnr, kurskod);
+        dal.removeStudentFromLaser(sPnr, kurskod);
     }
     
-    public String getStudentFlow() throws SQLException {
-        return dal.getStudentFlow();
+    public void getStudentFlow() throws SQLException {
+        dal.getStudentFlow();
     }
 }
