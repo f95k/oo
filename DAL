@@ -1,7 +1,13 @@
 
 package uppgift1;
+import java.awt.BorderLayout;
 import java.sql.*;
 import java.util.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class DAL {
     private Kurs kurs;
@@ -15,10 +21,11 @@ public class DAL {
     private String sAdress;
     private String sqlString;
     private String sqlString1;
+    private GUI gui;
     
     public Student getStudent(String sPnr) throws SQLException {
         Connection conn = Connector.startConnection();
-        sqlString = "SELECT * FROM Student WHERE pnr = '" + sPnr + "'";
+        sqlString = "SELECT * FROM Student WHERE sPnr = '" + sPnr + "'";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sqlString);
         rs.next();
@@ -29,6 +36,63 @@ public class DAL {
         Student student = new Student(sPnr, sNamn, sAdress);
         return student;
         
+    }
+    
+    public void getStudentTable(String sPnr) throws SQLException {
+        Connection conn = Connector.startConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        String s;
+        
+        try {
+            st = conn.createStatement();
+            s = "SELECT * FROM Student WHERE sPnr = '" + sPnr + "'";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+        }
+      
     }
     
     public Kurs getKurs(String kurskod) throws SQLException{
@@ -45,8 +109,237 @@ public class DAL {
         
     }
     
+      public void getKursBetygTable(String kurskod, String termin) throws SQLException {
+        Connection conn = Connector.startConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        String s;
+        
+        try {
+            st = conn.createStatement();
+            s =  "SELECT h.sPnr, s.sNamn, h.betyg FROM Last h JOIN Student s " + "ON h.sPnr = s.sPnr "
+                    + "WHERE h.kurskod = '" + kurskod + "' and h.termin = '" + termin + "'";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+        }
+      
+    }
+    
+       public void getKursTable(String kurskod) throws SQLException {
+        Connection conn = Connector.startConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        String s;
+        
+        try {
+            st = conn.createStatement();
+            s = "SELECT * FROM Kurs WHERE kurskod = '" + kurskod + "'";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+        }
+      
+    }
+ 
+       public void getStudentLaserTable(String sPnr) throws SQLException {
+        Connection conn = Connector.startConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        String s;
+        
+        try {
+            st = conn.createStatement();
+            s = "SELECT * FROM Laser WHERE sPnr = '" + sPnr + "'";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+        }
+      
+    }
+       
+       public void getStudentLastTable(String sPnr) throws SQLException {
+        Connection conn = Connector.startConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        String s;
+        
+        try {
+            st = conn.createStatement();
+            s = "SELECT * FROM Last WHERE sPnr = '" + sPnr + "'";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+        }
+      
+    }
+    
     // Hitta resultatet för en angiven student på en angiven kurs.
-	public ArrayList<Last> getGradeForCourse(String sPnr, String kurskod) throws SQLException {
+	public ArrayList<Last> getKursBetyg(String sPnr, String kurskod) throws SQLException {
 		ArrayList<Last> lastList = new ArrayList<Last>();
 
 		Connection conn = Connector.startConnection();
@@ -63,8 +356,124 @@ public class DAL {
 		return lastList;
 	}
         
+        public void getLastTable(String sPnr, String kurskod) throws SQLException {
+        Connection conn = Connector.startConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        String s;
+        
+        try {
+            st = conn.createStatement();
+            s = "SELECT sPnr, kurskod, termin, betyg FROM Last WHERE sPnr = '" + sPnr + "' and kurskod = '" + kurskod + "'";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+        }
+      
+    }
+        
+        public void getLaserTable(String kurskod, String termin) throws SQLException {
+        Connection conn = Connector.startConnection();
+        Statement st = null;
+        ResultSet rs = null;
+        String s;
+        
+        try {
+            st = conn.createStatement();
+            s = "SELECT s.sPnr, s.sNamn, s.sAdress FROM Laser r INNER JOIN Student s ON r.sPnr = s.sPnr "
+				+ "WHERE r.kurskod = '" + kurskod + "' and r.termin = '" + termin + "'";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+        }
+      
+    }
+        
+        
         // Hämtar alla kurser
-	public ArrayList<Kurs> getAllCourse() throws SQLException {
+	public ArrayList<Kurs> getAllKurser() throws SQLException {
 		ArrayList<Kurs> kursList = new ArrayList<Kurs>();
 
 		Connection conn = Connector.startConnection();
@@ -83,13 +492,13 @@ public class DAL {
 	}
         
         // Visa resultat för angiven kurs (Alla studenter som tagit kursen och deras betyg)
-	public ArrayList<Student> getGradeList(String kurskod, String termin) throws SQLException {
+	public ArrayList<Student> getBetygList(String kurskod, String termin) throws SQLException {
 
 		ArrayList<Student> studentList = new ArrayList<Student>();
 
 		Connection conn = Connector.startConnection();
 
-		sqlString = "SELECT h.ssid, s.sname, h.grade FROM Studied h JOIN Student s "
+		sqlString = "SELECT h.sPnr, s.sNamn, h.betyg FROM Last h JOIN Student s "
 				+ "ON h.ssid = s.ssid WHERE h.ccode = '"
 				+ kurskod+ "'";
 
@@ -106,14 +515,12 @@ public class DAL {
 	}
         
         // Hittar alla kurser EN student läser.
-	public ArrayList<Laser> getStudentsCourse(String sPnr) throws SQLException {
+	public ArrayList<Laser> getStudentsKurs(String sPnr) throws SQLException {
 		
 		ArrayList<Laser> kursList = new ArrayList<Laser>();
 
 		Connection con = Connector.startConnection();
-		sqlString = "SELECT c.ccode, c.cname, r.semester FROM Studying r "
-				+ "INNER JOIN Course c " + "ON r.ccode = c.ccode  "
-				+ "WHERE ssid = '" + sPnr + "'";
+		sqlString = "SELECT k.kurskod, k.kursnamn, r.termin FROM Laser r " + "INNER JOIN Kurs k " + "ON r.kurskod = k.ccode  " + "WHERE sPnr = '" + sPnr + "'";
 		
 		Statement stmt = con.createStatement();
 		ResultSet rs = stmt.executeQuery(sqlString);
@@ -135,8 +542,7 @@ public class DAL {
 
 		Statement stmt = conn.createStatement();
 		
-		String sqlString = "INSERT INTO Student VALUES ('" + sPnr + "', '"
-				+ sNamn + "', '" + sAddress + "');";
+		String sqlString = "INSERT INTO Student VALUES ('" + sPnr + "', '" + sNamn + "', '" + sAddress + "');";
 		
 		stmt.executeUpdate(sqlString);
 		stmt.close();
@@ -149,19 +555,17 @@ public class DAL {
 		Connection conn = Connector.startConnection();
 
 		Statement stmt = conn.createStatement();
-		String sqlString = "INSERT INTO Kurs VALUES ('" + kurskod + "', '"
-				+ kursnamn + "', '" + poang + "')";
+		String sqlString = "INSERT INTO Kurs VALUES ('" + kurskod + "', '" + kursnamn + "', '" + poang + "')";
 		stmt.executeUpdate(sqlString);
 		stmt.close();
 
 	}
         
-        public boolean checkStudentCourse(String sPnr, String kurskod) throws SQLException {
+        public boolean checkStudentKurs(String sPnr, String kurskod) throws SQLException {
 
 		Connection conn = Connector.startConnection();
 		
-		sqlString = "SELECT COUNT(*) FROM Studied WHERE ssid = '" + sPnr
-				+ "' and ccode = '" + kurskod + "' and grade != 'U'";
+		sqlString = "SELECT COUNT(*) FROM Last WHERE sPnr = '" + sPnr + "' and kurskod = '" + kurskod + "' and betyg != 'F'";
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sqlString);
 		rs.next();
@@ -173,67 +577,39 @@ public class DAL {
 		}
 	}
         
-        // Registrering av Student på Kurs
-	public String addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
-
-		String returnString = "0";
-		
-		Connection conn = Connector.startConnection();
-		poang2 = 0;
-		
-		//Deklarerar cCp2 med den totala poängen studenet läser och läst
-		poang2 = getTotalPoints(sPnr,kurskod);
-
-		//Räknar ut poängen för kursen student vill studera
-		sqlString1 = "SELECT ccp FROM Course WHERE ccode = '" + kurskod + "'";
-		Statement stmt1 = conn.createStatement();
-		ResultSet rs = stmt1.executeQuery(sqlString1);
-		poang1 = 0;
-		rs.next();
-		poang1= rs.getInt(1);
-		
-		//Hämtar poängen för kurserna han studenten studerar samt studerat + kursen studenten skall studera
-		if ((poang2 + poang1) <= 45) {
-			
-			//Checkar om studenten har fått godkänt betyg ifall studenten inte fått godkänt betyg utförs if-satsen
-			if(checkStudentCourse(sPnr, kurskod) == true){
-				
-				//Checkar om studenten redan läst kursen denna terminen, ifall studenten inte gjort det utförs if-satsen
-				if (checkStudentSemester(sPnr, kurskod, termin) == true){
-					Statement stmt = conn.createStatement();
-					String sqlString = "INSERT INTO Laser VALUES ('" + sPnr + "', '"
-							+ kurskod + "')";
-					stmt.executeUpdate(sqlString);
-					stmt.close();
-					returnString = "1";
-					return returnString;
-				}
-				returnString = "2";
-				return returnString;
-			}
-			returnString = "3";
-			return returnString;
-		}
-		returnString = "4";
-		return returnString;
-
-	}
-
-  
+      
         
+        public void addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
+            if(getTotalPoang(sPnr, termin) < 45) {
+            Connection conn = Connector.startConnection();
+            Statement stmt = conn.createStatement();
+            String sqlString = "INSERT INTO Laser VALUES ('" + sPnr + "', '" + kurskod + "', '" + termin + "')";
+            stmt.executeUpdate(sqlString);
+            stmt.close();
+            } else {                
+                System.out.println("Får ej överskrida 45p");
+                JOptionPane.showMessageDialog(null,
+					    "Får ej överskrida 45p / termin!",
+					    "FEL!!!!",
+					    JOptionPane.INFORMATION_MESSAGE);
+                return;
+				
+            }
+        }
+        
+  
 	// Registrering av avslutad kurs (Har läst)
-	public void addStudentStudied(String sPnr, String kurskod, String termin, String betyg) throws SQLException {
+	public void addStudentLast(String sPnr, String kurskod, String termin, String betyg) throws SQLException {
 
 		Connection conn = Connector.startConnection();
 
 		Statement stmt = conn.createStatement();
-		String sqlQuery = "INSERT INTO Last VALUES ('" + sPnr + "', '"
-				+ kurskod + "', '" + betyg + "')";
+		String sqlQuery = "INSERT INTO Last VALUES ('" + sPnr + "', '" + kurskod + "', '" + termin + "', '" + betyg + "')";
 		stmt.executeUpdate(sqlQuery);
 		stmt.close();
 
 		//Tar bort studenten från studying i databasen
-		removeStudentFromStudying(sPnr, kurskod);
+		removeStudentFromLaser(sPnr, kurskod);
 
 	}
         
@@ -243,11 +619,10 @@ public class DAL {
 	  */
 	
 	//Checkar om studenten har läst kursen på samma termin
-	public boolean checkStudentSemester(String sPnr, String kurskod, String termin) throws SQLException{
+	public boolean checkStudentTermin(String sPnr, String kurskod, String termin) throws SQLException{
 		Connection conn = Connector.startConnection();
 
-		sqlString = "SELECT COUNT(*) FROM Studied WHERE ssid = '" + sPnr
-				+ "' AND ccode = '" + kurskod + "' AND semester = '";
+		sqlString = "SELECT COUNT(*) FROM Last WHERE sPnr = '" + sPnr + "' AND kurskod = '" + kurskod + "' AND termin = '" + termin + "'";
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sqlString);
 		rs.next();
@@ -264,14 +639,12 @@ public class DAL {
         
         
         	// Räknar ut totala antalet hp-poäng för en student
-	public int getTotalPoints(String sPnr, String termin) throws SQLException {
+	public int getTotalPoang(String sPnr, String termin) throws SQLException {
 
 		Connection conn = Connector.startConnection();
 		
 		//Hämtar poängen från studied (läst)
-		String sqlString = "SELECT SUM(c.ccp) FROM Course c WHERE c.ccode "
-				+ "IN (SELECT h.ccode FROM Studied h WHERE h.ssid = '" + sPnr
-				+ "' AND h.semester = '" + termin + "')";
+		String sqlString = "SELECT SUM(k.poang) FROM Kurs k WHERE k.kurskod " + "IN (SELECT h.kurskod FROM Last h WHERE h.sPnr = '" + sPnr + "' AND h.termin = '" + termin + "')";
 
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sqlString);
@@ -282,10 +655,8 @@ public class DAL {
 		}
                 
                 
-                	//Hämtar poängen från studying (läser)
-		String sqlString1 = "SELECT SUM(c.ccp) FROM Course c WHERE c.ccode "
-				+ "IN (SELECT h.ccode FROM Studying h WHERE h.ssid = '" + sPnr
-				+ "' AND h.semester = '" + termin + "')";
+                	//Hämtar poängen från  läser
+		String sqlString1 = "SELECT SUM(p.poang) FROM Kurs p WHERE p.kurskod " + "IN (SELECT h.kurskod FROM Laser h WHERE h.sPnr = '" + sPnr + "' AND h.termin = '" + termin + "')";
 
 		Statement stmt1 = conn.createStatement();
 		ResultSet rs1 = stmt1.executeQuery(sqlString1);
@@ -302,25 +673,20 @@ public class DAL {
 	}
         
         	// Hitta samtliga studenter som inte är klara med en angiven kurs
-	public ArrayList<Student> getAllStudentReadingCourse(String kurskod,
-			String termin) throws SQLException {
+	public ArrayList<Student> getAllStudentReadingKurs(String kurskod, String termin) throws SQLException {
 
 		ArrayList<Student> studentList = new ArrayList<Student>();
 
 		Connection conn = Connector.startConnection();
 
-		sqlString = "SELECT s.ssid, s.sname, s.saddress FROM Studying r INNER JOIN Student s ON r.ssid = s.ssid "
-				+ "WHERE r.ccode = '"
-				+ kurskod
-				+ "' and r.semester = '"
-				+ termin + "'";
+		sqlString = "SELECT s.sPnr, s.sNamn, s.sAdress FROM Laser r INNER JOIN Student s ON r.sPnr = s.sPnr "
+				+ "WHERE r.kurskod = '" + kurskod + "' and r.termin = '" + termin + "'";
 
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sqlString);
 
 		while (rs.next()) {
-                    Student student = new Student(rs.getString(1), rs.getString(2),
-                            rs.getString(3));
+                    Student student = new Student(rs.getString(1), rs.getString(2), rs.getString(3));
 			studentList.add(student);
 		}
 
@@ -334,15 +700,15 @@ public class DAL {
 
 		Connection conn = Connector.startConnection();
 
-		sqlString = "SELECT Grade, (COUNT(grade)* 100 / (SELECT COUNT(*) FROM Studied WHERE ccode='"
+		sqlString = "SELECT betyg, (COUNT(betyg)* 100 / (SELECT COUNT(*) FROM Last WHERE kurskod='"
 				+ kurskod
 				+ "')) AS ScorePercentage"
-				+ " FROM Studied GROUP BY ccode, grade, semester "
-				+ "HAVING ccode='"
+				+ " FROM Last GROUP BY kurskod, betyg , termin "
+				+ "HAVING kurskod='"
 				+ kurskod
-				+ "' and semester ='"
+				+ "' and termin ='"
 				+ termin
-				+ "' AND Grade='A'";
+				+ "' AND betyg='A'";
 
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sqlString);
@@ -355,26 +721,64 @@ public class DAL {
 	}
         
         //Genomströmning
-	public String getStudentFlow() throws SQLException {
-
-		Connection conn = Connector.startConnection();
-		String kurskod;
-		sqlString = "SELECT TOP 1 ccode, "
-					+"FORMAT((SUM(CASE WHEN grade != 'U' "
-					+ "THEN 1 ELSE 0 END)) * 100.0 / "
-					+"(SUM(CASE WHEN grade LIKE '_' THEN 1 "
-					+"ELSE 0 END)),'F0') AS PassedPercentage "
-					+"FROM studied "
-					+"GROUP BY ccode "
-					+"ORDER BY PassedPercentage ASC";
-		
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-		rs.next();
-		kurskod = rs.getString(1);
-
-		return kurskod;
-	}
+	public void getStudentFlow() throws SQLException {
+             Connection conn = Connector.startConnection();
+             Statement st = null;
+             ResultSet rs = null;
+             String s;
+	
+                
+           try {
+            st = conn.createStatement();
+            s = "Select distinct( kurskod ), count( distinct(sPnr) ) From Last WHERE kurskod in (SELECT kurskod FROM Last HAVING betyg <> 'F'";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+           }
+        }
+      
+        
         
          /**
 	  * ************** Borttagningsmetoder *****************
@@ -385,7 +789,7 @@ public class DAL {
 
 		Connection conn = Connector.startConnection();
 
-		String sqlString = "DELETE FROM Student WHERE ssid = '" + sPnr + "'";
+		String sqlString = "DELETE FROM Student WHERE sPnr = '" + sPnr + "'";
 		
 		Statement stmt = conn.createStatement();
 		stmt.executeUpdate(sqlString);
@@ -397,7 +801,7 @@ public class DAL {
 		
 		Connection conn = Connector.startConnection();
 
-		String sqlString = "DELETE FROM Course WHERE ccode = '" + kurskod + "'";
+		String sqlString = "DELETE FROM Kurs WHERE kurskod = '" + kurskod + "'";
 		
 		Statement stmt = conn.createStatement();
 		stmt.executeUpdate(sqlString);
@@ -405,16 +809,42 @@ public class DAL {
 	}
         
         // Ta bort student från kurs
-	public void removeStudentFromStudying(String sPnr, String kurskod) throws SQLException {
+	public void removeStudentFromLaser(String sPnr, String kurskod) throws SQLException {
 		
 		Connection conn = Connector.startConnection();
 
-		String sqlString = "DELETE FROM Studying WHERE ssid = '" + sPnr
-				+ "' AND ccode = '" + kurskod + "'";
+		String sqlString = "DELETE FROM Laser WHERE sPnr = '" + sPnr
+				+ "' AND kurskod = '" + kurskod + "'";
 		
 		Statement stmt = conn.createStatement();
 		stmt.executeUpdate(sqlString);
 		conn.close();
+	}
+        
+        
+        	public String highestFlow() throws SQLException {
+                Connection conn = Connector.startConnection();
+		String sql = "select kurskod,count(*) from Last group by kurskod order by 2 desc";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		String highestCourseCode = null;
+		String courseName = null;
+
+		ResultSet rs = stmt.executeQuery();
+		rs.next();
+		try {
+			highestCourseCode = rs.getString(1);
+		} catch (SQLException e) {
+			JOptionPane
+					.showMessageDialog(null,
+							"Cannot get course with highest flow right now. Try updating your courses");
+		}
+		rs.close();
+		stmt.close();
+
+		courseName = getKurs(highestCourseCode).getKursnamn();
+		return courseName;
+                
+              
 	}
 }
 
