@@ -579,20 +579,21 @@ public class DAL {
         
       
         
-        public void addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
+        public boolean addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
             if(getTotalPoang(sPnr, termin) < 45) {
-            Connection conn = Connector.startConnection();
-            Statement stmt = conn.createStatement();
-            String sqlString = "INSERT INTO Laser VALUES ('" + sPnr + "', '" + kurskod + "', '" + termin + "')";
-            stmt.executeUpdate(sqlString);
-            stmt.close();
+                Connection conn = Connector.startConnection();
+                Statement stmt = conn.createStatement();
+                String sqlString = "INSERT INTO Laser VALUES ('" + sPnr + "', '" + kurskod + "', '" + termin + "')";
+                stmt.executeUpdate(sqlString);
+                stmt.close();
+                return true;
             } else {                
                 System.out.println("Får ej överskrida 45p");
                 JOptionPane.showMessageDialog(null,
 					    "Får ej överskrida 45p / termin!",
 					    "FEL!!!!",
 					    JOptionPane.INFORMATION_MESSAGE);
-                return;
+                return false;
 				
             }
         }
@@ -693,89 +694,28 @@ public class DAL {
 		return studentList;
 	}
         
-        // Visa procentantalet studenter som fått A på en angiven kurs.
-	public String getPercentageGradeA(String kurskod, String termin) throws SQLException {
-
-		String percent = new String();
-
-		Connection conn = Connector.startConnection();
-
-		sqlString = "SELECT betyg, (COUNT(betyg)* 100 / (SELECT COUNT(*) FROM Last WHERE kurskod='"
-				+ kurskod
-				+ "')) AS ScorePercentage"
-				+ " FROM Last GROUP BY kurskod, betyg , termin "
-				+ "HAVING kurskod='"
-				+ kurskod
-				+ "' and termin ='"
-				+ termin
-				+ "' AND betyg='A'";
-
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-
-		while (rs.next()) {
-			percent = rs.getString(2);
-		}
-
-		return percent;
-	}
-        
+   
         //Genomströmning
-	public void getStudentFlow() throws SQLException {
-             Connection conn = Connector.startConnection();
-             Statement st = null;
-             ResultSet rs = null;
-             String s;
-	
+	public String highestFlow() throws SQLException {
+            Connection conn = Connector.startConnection();
+            PreparedStatement s = conn.prepareStatement("Select kurskod, count(*) as passes from Last where betyg != 'F' group by kurskod");
+            ResultSet calc = s.executeQuery();
+            
+            String best = null;
+            int value = 0;
+            
+            while (calc.next()) {
+                String currentString = calc.getString(1);
+                int current = calc.getInt(2);
                 
-           try {
-            st = conn.createStatement();
-            s = "Select distinct( kurskod ), count( distinct(sPnr) ) From Last WHERE kurskod in (SELECT kurskod FROM Last HAVING betyg <> 'F'";
-            rs = st.executeQuery(s);
-            ResultSetMetaData rsmt = rs.getMetaData();
-            int c = rsmt.getColumnCount();
-            Vector column = new Vector(c);
-            for(int i = 1; i <= c; i++) {
-                column.add(rsmt.getColumnName(i));
-            }
-            Vector data = new Vector();
-            Vector row = new Vector();
-            while(rs.next()) {
-                row = new Vector(c);
-                for(int i = 1; i <= c; i++) {
-                    row.add(rs.getString(i));
+                if(current > value) {
+                    best = currentString;
+                    value = current;
                 }
-                data.add(row);
             }
             
-            JFrame frame = new JFrame();
-            frame.setSize(500,120);
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            JPanel panel  = new JPanel();
-            JTable table = new JTable(data, column);
-            JScrollPane jsp = new JScrollPane(table);
-            panel.setLayout(new BorderLayout());
-            panel.add(jsp,BorderLayout.CENTER);
-            frame.setContentPane(panel);
-            frame.setVisible(true);
-            
-            
-            
-            
-        } catch (Exception e) {
-            
-        } finally {
-            try {
-                st.close();
-                rs.close();
-                conn.close();
-                
-                
-            } catch (Exception e) {
-                
-            }
-           }
+            return best;
+                                        
         }
       
         
@@ -815,37 +755,38 @@ public class DAL {
 
 		String sqlString = "DELETE FROM Laser WHERE sPnr = '" + sPnr
 				+ "' AND kurskod = '" + kurskod + "'";
-		
+
 		Statement stmt = conn.createStatement();
 		stmt.executeUpdate(sqlString);
 		conn.close();
 	}
         
-        
-        	public String highestFlow() throws SQLException {
-                Connection conn = Connector.startConnection();
-		String sql = "select kurskod,count(*) from Last group by kurskod order by 2 desc";
-		PreparedStatement stmt = conn.prepareStatement(sql);
-		String highestCourseCode = null;
-		String courseName = null;
-
-		ResultSet rs = stmt.executeQuery();
-		rs.next();
-		try {
-			highestCourseCode = rs.getString(1);
-		} catch (SQLException e) {
-			JOptionPane
-					.showMessageDialog(null,
-							"Cannot get course with highest flow right now. Try updating your courses");
-		}
-		rs.close();
-		stmt.close();
-
-		courseName = getKurs(highestCourseCode).getKursnamn();
-		return courseName;
+        public double numberOfA(String kurskod) throws SQLException {
+            Connection conn = Connector.startConnection();
+            PreparedStatement s = conn.prepareStatement("Select betyg from Last where kurskod = ?");
+            s.setString(1, kurskod);
+            ResultSet calc = s.executeQuery();
+            int a = 0;
+            int theRest = 0;
+            
+            while(calc.next()) {
+                if(calc.getString(1).trim().equals("A")) {
+                    a++;
+                    
+                } else {
+                    theRest++;
+                }
+            }
+            try {
+                return Math.round( (float) a / (a + theRest) * 100);
+            } catch (ArithmeticException e) {
                 
-              
-	}
+            }
+            return 0;
+        }
+        
+        
+    
 }
 
         
