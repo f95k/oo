@@ -20,8 +20,12 @@ public class Controller {
         dal.getStudentTable(sPnr);
     }
     
-    public void getHighestFlow() throws SQLException{
-        dal.highestFlow();
+    public String HighestFlow() throws SQLException{
+        return dal.highestFlow();
+    }
+    
+     public double numberOfA(String kurskod) throws SQLException{
+        return dal.numberOfA(kurskod);
     }
     
      public void getKursTable(String kurskod) throws SQLException{
@@ -81,8 +85,8 @@ public class Controller {
     }
     
     
-    public void addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
-        dal.addStudentLaser(sPnr, kurskod, termin);
+    public boolean addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
+        return dal.addStudentLaser(sPnr, kurskod, termin);
     }
     
     public void addStudentLast(String sPnr, String kurskod, String termin, String betyg) throws SQLException {
@@ -97,10 +101,6 @@ public class Controller {
         return dal.getAllKurser();
     }
     
-    public String getPercentageGradeA(String kurskod, String termin) throws SQLException {
-        percentage = dal.getPercentageGradeA(kurskod, termin);
-        return percentage;
-    }
     
     public void removeStudent(String sPnr) throws SQLException {
         dal.deleteStudent(sPnr);
@@ -114,7 +114,5 @@ public class Controller {
         dal.removeStudentFromLaser(sPnr, kurskod);
     }
     
-    public void getStudentFlow() throws SQLException {
-        dal.getStudentFlow();
-    }
+   
 }
