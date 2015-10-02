@@ -10,35 +10,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 public class DAL {
-    private Kurs kurs;
-    private String kursnamn;
     private int poang;
     private int poang1;
     private int poang2;
-    private Laser laser;
-    private Last last;
-    private String sNamn;
     private String sAdress;
     private String sqlString;
-    private String sqlString1;
-    private GUI gui;
     
-    public Student getStudent(String sPnr) throws SQLException {
-        Connection conn = Connector.startConnection();
-        sqlString = "SELECT * FROM Student WHERE sPnr = '" + sPnr + "'";
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sqlString);
-        rs.next();
-        sPnr = rs.getString(1);
-        sNamn = rs.getString(2);
-        sAdress = rs.getString(3);
-        
-        Student student = new Student(sPnr, sNamn, sAdress);
-        return student;
-        
-    }
     
-    public void getStudentTable(String sPnr) throws SQLException {
+   
+    
+      
+        public void getStudentTable(String sPnr) throws SQLException {
         Connection conn = Connector.startConnection();
         Statement st = null;
         ResultSet rs = null;
@@ -95,19 +77,68 @@ public class DAL {
       
     }
     
-    public Kurs getKurs(String kurskod) throws SQLException{
+    
+    public void getKursLista() throws SQLException {
         Connection conn = Connector.startConnection();
-        sqlString = "SELECT * FROM Kurs WHERE kurskod = '" + kurskod + "'";
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sqlString); 
-        rs.next(); 
-        kurskod = rs.getString(1); 
-        kursnamn = rs.getString(2); 
-        poang = rs.getInt(3); 
-        kurs = new Kurs(kurskod, kursnamn, poang); 
-        return kurs;
+        Statement st = null;
+        ResultSet rs = null;
+        String s;
         
+        
+        try {
+            
+            st = conn.createStatement();
+            s = "SELECT * FROM Kurs";
+            rs = st.executeQuery(s);
+            ResultSetMetaData rsmt = rs.getMetaData();
+            int c = rsmt.getColumnCount();
+            Vector column = new Vector(c);
+            for(int i = 1; i <= c; i++) {
+                column.add(rsmt.getColumnName(i));
+            }
+            Vector data = new Vector();
+            Vector row = new Vector();
+            while(rs.next()) {
+                row = new Vector(c);
+                for(int i = 1; i <= c; i++) {
+                    row.add(rs.getString(i));
+                }
+                data.add(row);
+            }
+            
+            JFrame frame = new JFrame();
+            frame.setSize(500,120);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JPanel panel  = new JPanel();
+            JTable table = new JTable(data, column);
+            JScrollPane jsp = new JScrollPane(table);
+            panel.setLayout(new BorderLayout());
+            panel.add(jsp,BorderLayout.CENTER);
+            frame.setContentPane(panel);
+            frame.setVisible(true);
+            
+            
+            
+            
+        } catch (Exception e) {
+            
+        } finally {
+            try {
+                st.close();
+                rs.close();
+                conn.close();
+                
+                
+            } catch (Exception e) {
+                
+            }
+        }
+      
     }
+    
+
+    
     
       public void getKursBetygTable(String kurskod, String termin) throws SQLException {
         Connection conn = Connector.startConnection();
@@ -117,8 +148,8 @@ public class DAL {
         
         try {
             st = conn.createStatement();
-            s =  "SELECT h.sPnr, s.sNamn, h.betyg FROM Last h JOIN Student s " + "ON h.sPnr = s.sPnr "
-                    + "WHERE h.kurskod = '" + kurskod + "' and h.termin = '" + termin + "'";
+            s =  "SELECT l.sPnr, s.sNamn, l.betyg FROM Last l JOIN Student s " + "ON l.sPnr = s.sPnr "
+                    + "WHERE l.kurskod = '" + kurskod + "' and l.termin = '" + termin + "'";
             rs = st.executeQuery(s);
             ResultSetMetaData rsmt = rs.getMetaData();
             int c = rsmt.getColumnCount();
@@ -338,23 +369,7 @@ public class DAL {
       
     }
     
-    // Hitta resultatet för en angiven student på en angiven kurs.
-	public ArrayList<Last> getKursBetyg(String sPnr, String kurskod) throws SQLException {
-		ArrayList<Last> lastList = new ArrayList<Last>();
-
-		Connection conn = Connector.startConnection();
-
-		sqlString = "SELECT sPnr, kurskod, betyg FROM Last WHERE sPnr = '" + sPnr + "' and kurskod = '" + kurskod + "'";
-
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-		while (rs.next()) {
-                     Last l1 = new Last(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
-		     lastList.add(last);
-		}
-
-		return lastList;
-	}
+    
         
         public void getLastTable(String sPnr, String kurskod) throws SQLException {
         Connection conn = Connector.startConnection();
@@ -421,8 +436,8 @@ public class DAL {
         
         try {
             st = conn.createStatement();
-            s = "SELECT s.sPnr, s.sNamn, s.sAdress FROM Laser r INNER JOIN Student s ON r.sPnr = s.sPnr "
-				+ "WHERE r.kurskod = '" + kurskod + "' and r.termin = '" + termin + "'";
+            s = "SELECT s.sPnr, s.sNamn, s.sAdress FROM Laser l INNER JOIN Student s ON l.sPnr = s.sPnr "
+				+ "WHERE l.kurskod = '" + kurskod + "' and l.termin = '" + termin + "'";
             rs = st.executeQuery(s);
             ResultSetMetaData rsmt = rs.getMetaData();
             int c = rsmt.getColumnCount();
@@ -472,125 +487,67 @@ public class DAL {
     }
         
         
-        // Hämtar alla kurser
-	public ArrayList<Kurs> getAllKurser() throws SQLException {
-		ArrayList<Kurs> kursList = new ArrayList<Kurs>();
 
-		Connection conn = Connector.startConnection();
-
-		sqlString = "SELECT * FROM Kurs";
-
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-
-		while (rs.next()) {
-			kurs= new Kurs(rs.getString(1), rs.getString(2), rs.getInt(3));
-			kursList.add(kurs);
-		}
-
-		return kursList;
-	}
-        
-        // Visa resultat för angiven kurs (Alla studenter som tagit kursen och deras betyg)
-	public ArrayList<Student> getBetygList(String kurskod, String termin) throws SQLException {
-
-		ArrayList<Student> studentList = new ArrayList<Student>();
-
-		Connection conn = Connector.startConnection();
-
-		sqlString = "SELECT h.sPnr, s.sNamn, h.betyg FROM Last h JOIN Student s "
-				+ "ON h.ssid = s.ssid WHERE h.ccode = '"
-				+ kurskod+ "'";
-
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-
-		while (rs.next()) {
-                    Student student = new Student(rs.getString(1), rs.getString(2),
-                            rs.getString(3));
-			studentList.add(student);
-		}
-
-		return studentList;
-	}
-        
-        // Hittar alla kurser EN student läser.
-	public ArrayList<Laser> getStudentsKurs(String sPnr) throws SQLException {
-		
-		ArrayList<Laser> kursList = new ArrayList<Laser>();
-
-		Connection con = Connector.startConnection();
-		sqlString = "SELECT k.kurskod, k.kursnamn, r.termin FROM Laser r " + "INNER JOIN Kurs k " + "ON r.kurskod = k.ccode  " + "WHERE sPnr = '" + sPnr + "'";
-		
-		Statement stmt = con.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-
-		while (rs.next()) {
-			laser = new Laser(rs.getString(1), rs.getString(2),
-					rs.getString(3));
-			kursList.add(laser);
-
-		}
-		
-		return kursList;
-	}
-        
         // Registrering av Student
 	public void addStudent(String sPnr, String sNamn, String sAddress) throws SQLException {
 
-		Connection conn = Connector.startConnection();
-
-		Statement stmt = conn.createStatement();
-		
-		String sqlString = "INSERT INTO Student VALUES ('" + sPnr + "', '" + sNamn + "', '" + sAddress + "');";
-		
-		stmt.executeUpdate(sqlString);
-		stmt.close();
+            Connection conn = Connector.startConnection();
+                
+                
+            Statement stmt = conn.createStatement();
+            String sqlString = "INSERT INTO Student VALUES('" + sPnr + "', '" + sNamn + "', '" + sAdress + "');";
+            stmt.executeUpdate(sqlString);
+            stmt.close();
+                
 
 	}
         
         // Registrering av Kurs
 	public void addKurs(String kurskod, String kursnamn, int poang) throws SQLException {
 		
-		Connection conn = Connector.startConnection();
-
-		Statement stmt = conn.createStatement();
-		String sqlString = "INSERT INTO Kurs VALUES ('" + kurskod + "', '" + kursnamn + "', '" + poang + "')";
-		stmt.executeUpdate(sqlString);
-		stmt.close();
+            Connection conn = Connector.startConnection();
+             
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO Kurs VALUES(?, ?, ?)");
+            stmt.setString(1, kurskod);
+            stmt.setString(2, kursnamn);
+            stmt.setInt(3, poang);
+            stmt.executeUpdate();
+            stmt.close();
 
 	}
         
         public boolean checkStudentKurs(String sPnr, String kurskod) throws SQLException {
 
-		Connection conn = Connector.startConnection();
-		
-		sqlString = "SELECT COUNT(*) FROM Last WHERE sPnr = '" + sPnr + "' and kurskod = '" + kurskod + "' and betyg != 'F'";
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-		rs.next();
+            Connection conn = Connector.startConnection();
+	        
+            Statement stmt = conn.createStatement();
+            sqlString = "SELECT COUNT(*) FROM Last WHERE sPnr = '" + sPnr + "' and kurskod = '" + kurskod + "' and betyg != 'F'";
+            ResultSet rs = stmt.executeQuery(sqlString);
+            rs.next();
 
-		if (rs.getInt(1) != 0) {
-			return false;
-		} else {
-			return true;
-		}
+            if (rs.getInt(1) != 0) {
+                return false;
+            } else {
+               return true;
+            }
 	}
         
       
         
-        public boolean addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
-            if(getTotalPoang(sPnr, termin) < 45) {
+         public boolean addStudentLaser(String sPnr, String kurskod, String termin) throws SQLException {
+                
+                if(getTotalPoang(sPnr, termin) < 45 && checkStudentKurs(sPnr, kurskod) == false){
                 Connection conn = Connector.startConnection();
-                Statement stmt = conn.createStatement();
-                String sqlString = "INSERT INTO Laser VALUES ('" + sPnr + "', '" + kurskod + "', '" + termin + "')";
-                stmt.executeUpdate(sqlString);
+                PreparedStatement stmt = conn.prepareStatement("INSERT INTO Laser VALUES (?, ?, ?)");
+                stmt.setString(1, sPnr);
+                stmt.setString(2, kurskod);
+                stmt.setString(3, termin);
+                stmt.executeUpdate();
                 stmt.close();
                 return true;
             } else {                
-                System.out.println("Får ej överskrida 45p");
                 JOptionPane.showMessageDialog(null,
-					    "Får ej överskrida 45p / termin!",
+					    "Möjliga problem: \n 1. Redan läst kursen \n 2. Kommer överskrida 45p / termin \n 3. Kursen finns inte ",
 					    "FEL!!!!",
 					    JOptionPane.INFORMATION_MESSAGE);
                 return false;
@@ -609,43 +566,23 @@ public class DAL {
 		stmt.executeUpdate(sqlQuery);
 		stmt.close();
 
-		//Tar bort studenten från studying i databasen
+		//Tar bort studenten från Läser i databasen
 		removeStudentFromLaser(sPnr, kurskod);
 
 	}
         
-        
-	 /**
-	  * ************** Specialmetoder (A-B) *****************
-	  */
+       
 	
-	//Checkar om studenten har läst kursen på samma termin
-	public boolean checkStudentTermin(String sPnr, String kurskod, String termin) throws SQLException{
-		Connection conn = Connector.startConnection();
 
-		sqlString = "SELECT COUNT(*) FROM Last WHERE sPnr = '" + sPnr + "' AND kurskod = '" + kurskod + "' AND termin = '" + termin + "'";
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-		rs.next();
-
-		if (rs.getInt(1) != 0) {
-			return false;
-		} else {
-			return true;
-		}
-		
-		
-	}
+       
         
-        
-        
-        	// Räknar ut totala antalet hp-poäng för en student
+        //Antalet poäng som en student läst / termin
 	public int getTotalPoang(String sPnr, String termin) throws SQLException {
 
 		Connection conn = Connector.startConnection();
 		
 		//Hämtar poängen från studied (läst)
-		String sqlString = "SELECT SUM(k.poang) FROM Kurs k WHERE k.kurskod " + "IN (SELECT h.kurskod FROM Last h WHERE h.sPnr = '" + sPnr + "' AND h.termin = '" + termin + "')";
+		String sqlString = "SELECT SUM(k.poang) FROM Kurs k WHERE k.kurskod " + "IN (SELECT l.kurskod FROM Last l WHERE l.sPnr = '" + sPnr + "' AND l.termin = '" + termin + "')";
 
 		Statement stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sqlString);
@@ -657,7 +594,7 @@ public class DAL {
                 
                 
                 	//Hämtar poängen från  läser
-		String sqlString1 = "SELECT SUM(p.poang) FROM Kurs p WHERE p.kurskod " + "IN (SELECT h.kurskod FROM Laser h WHERE h.sPnr = '" + sPnr + "' AND h.termin = '" + termin + "')";
+		String sqlString1 = "SELECT SUM(p.poang) FROM Kurs p WHERE p.kurskod " + "IN (SELECT l.kurskod FROM Laser l WHERE l.sPnr = '" + sPnr + "' AND l.termin = '" + termin + "')";
 
 		Statement stmt1 = conn.createStatement();
 		ResultSet rs1 = stmt1.executeQuery(sqlString1);
@@ -673,26 +610,6 @@ public class DAL {
 		return poang;
 	}
         
-        	// Hitta samtliga studenter som inte är klara med en angiven kurs
-	public ArrayList<Student> getAllStudentReadingKurs(String kurskod, String termin) throws SQLException {
-
-		ArrayList<Student> studentList = new ArrayList<Student>();
-
-		Connection conn = Connector.startConnection();
-
-		sqlString = "SELECT s.sPnr, s.sNamn, s.sAdress FROM Laser r INNER JOIN Student s ON r.sPnr = s.sPnr "
-				+ "WHERE r.kurskod = '" + kurskod + "' and r.termin = '" + termin + "'";
-
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(sqlString);
-
-		while (rs.next()) {
-                    Student student = new Student(rs.getString(1), rs.getString(2), rs.getString(3));
-			studentList.add(student);
-		}
-
-		return studentList;
-	}
         
    
         //Genomströmning
@@ -788,18 +705,3 @@ public class DAL {
         
     
 }
-
-        
-        
-        
-        
-        
-        
-        
-
-        
-        
-
-    
-    
-
