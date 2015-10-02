@@ -1,16 +1,9 @@
 
 package uppgift1;
 import java.sql.*;
-import java.util.*;
 
 public class Controller {
-    private Student student;
-    private Kurs kurs;
-    private String percentage;
-    ArrayList<Student> betyglist;
-    ArrayList<Kurs> kurslist;
     private DAL dal;
-    public String exceptionMessage;
     
     public Controller() {
         dal = new DAL();
@@ -56,25 +49,7 @@ public class Controller {
         dal.getTotalPoang(sPnr, sPnr);
     } 
     
-    
-    public Student findStudent(String sPnr) throws SQLException{
-        student = dal.getStudent(sPnr);
-        return student;
-    }
-    
-    public Kurs findKurs(String kurskod) throws SQLException {
-        kurs = dal.getKurs(kurskod);
-        return kurs;
-    }
-    
-    public ArrayList<Last> findBetyg(String sPnr, String kurskod) throws SQLException {
-        return dal.getKursBetyg(sPnr, kurskod);
-    }
-    
-    public ArrayList<Student> getBetygList(String kurskod, String termin) throws SQLException {
-        return dal.getAllStudentReadingKurs(kurskod, termin);
-    }
-    
+
     public void addStudent(String sPnr, String sNamn, String sAdress) throws SQLException {
         dal.addStudent(sPnr, sNamn, sAdress);
     }
@@ -93,21 +68,16 @@ public class Controller {
         dal.addStudentLast(sPnr, kurskod, termin, betyg);
     }
     
-    public ArrayList<Student> getAllStudentReadingCourse(String kurskod, String termin) throws SQLException {
-        return dal.getAllStudentReadingKurs(kurskod, termin);
-    }
-    
-    public ArrayList<Kurs> getAllKurs() throws SQLException {
-        return dal.getAllKurser();
-    }
-    
-    
     public void removeStudent(String sPnr) throws SQLException {
         dal.deleteStudent(sPnr);
     }
     
     public void removeKurs(String kurskod) throws SQLException {
         dal.deleteCourse(kurskod);
+    }
+    
+     public void getKursLista() throws SQLException {
+        dal.getKursLista();
     }
     
     public void removeStudentFromLaser(String sPnr, String kurskod) throws SQLException {
